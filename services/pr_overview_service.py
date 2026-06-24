@@ -1,95 +1,22 @@
 import re
+from services.github_service import GithubService
+from schemas.overview_schema import PROverviewRequest
 
+from utils.github_url_parser import get_pr_metadata
 
 class PROverviewService:
+    def __init__(self):
+        self.github_service = GithubService()
 
-    def generate_overview(self, pr_diff: str):
-        files = self._parse_files(pr_diff)
-
-        return {
-            "files_changed": len(files),
-            "total_additions": sum(f["additions"] for f in files),
-            "total_deletions": sum(f["deletions"] for f in files),
-            "files": files,
-        }
-
-    def _parse_files(self, pr_diff: str):
-        sections = re.split(r"(?=diff --git)", pr_diff)
-
-        files = []
-
-        for section in sections:
-            if not section.strip():
-                continue
-
-            file_info = self._parse_file_section(section)
-
-            if file_info:
-                files.append(file_info)
-
-        return files
-
-    def _parse_file_section(self, section: str):
-
-        match = re.search(
-            r"diff --git a/(.*?) b/(.*?)\n",
-            section
-        )
-
-        if not match:
-            return None
-
-        old_file = match.group(1)
-        new_file = match.group(2)
-
-        change_type = "modified"
-
-        if "new file mode" in section:
-            change_type = "added"
-
-        elif "deleted file mode" in section:
-            change_type = "deleted"
-
-        elif "rename from" in section:
-            change_type = "renamed"
-
-        additions = 0
-        deletions = 0
-
-        for line in section.splitlines():
-
-            if line.startswith("+++"):
-                continue
-
-            if line.startswith("---"):
-                continue
-
-            if line.startswith("+"):
-                additions += 1
-
-            elif line.startswith("-"):
-                deletions += 1
-
-        result = {
-            "file_name": new_file,
-            "change_type": change_type,
-            "additions": additions,
-            "deletions": deletions,
-        }
-
-        if change_type == "renamed":
-
-            rename_from = re.search(
-                r"rename from (.*)",
-                section
-            )
-
-            rename_to = re.search(
-                r"rename to (.*)",
-                section
-            )
-
-            result["old_name"] = rename_from.group(1)
-            result["new_name"] = rename_to.group(1)
-
-        return result
+    def generate_overview(self, pr_data: PROverviewRequest):
+        if pr_data.url:
+            pr_metadata = get_pr_metadata(pr=pr_data.url)
+            if pr_metadata is None:
+                raise Exception("Invalid pr url")
+            else:
+                return self.github_service.get_pr_files_overview(pr_metadata)
+        else:
+            pr_metadata = pr_data.model_dump()
+            return self.github_service.get_pr_files_overview(pr_metadata)
+       
+   
