@@ -35,10 +35,11 @@ class FileChange(BaseModel):
     additions: int
     deletions: int
     changes: int
+    patch: str
 
 class PROverviewData(BaseModel):
     files_changed: int
-    files: list[FileChange]
+    files: List[FileChange]
     total_additions: int
     total_deletions: int
     
@@ -47,3 +48,7 @@ class PROverview(BaseModel):
     success: bool
     message: str
     data: PROverviewData
+    
+class PRSummary(BaseModel):
+    summary: str
+    key_changes: List[str]

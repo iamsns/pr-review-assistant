@@ -1,2 +1,9 @@
 fastapi
 uvicorn
+
+# LangChain Core
+langchain
+langchain-core
+langchain-community
+
+dotenv

@@ -25,7 +25,8 @@ class GithubService:
                     change_type=file["status"],
                     additions=file["additions"],
                     deletions=file["deletions"],
-                    changes=file["changes"]
+                    changes=file["changes"],
+                    patch=file["patch"]
                 )
                 for file in files_data
             ]
@@ -39,23 +40,3 @@ class GithubService:
 
         except requests.RequestException as e:
             raise Exception(f"Failed to fetch PR details: {str(e)}")
-        
-    def get_pr_metadata(self, pr: str):         
-        pattern = r"github\.com/(?P<owner>[^/]+)/(?P<repo>[^/]+)/pull/(?P<pr_number>\d+)/?$"
-
-        match = re.search(pattern, pr)
-
-        if match:
-            # Extract data as a clean dictionary
-            data = match.groupdict()
-            print("Extracted Data:", data)
-            
-            # Access individual components directly
-            print(f"Owner:   {data['owner']}")
-            print(f"Repo:    {data['repo']}")
-            print(f"PR Num:  {data['pr_number']}")
-            data['pr_number'] = int(data['pr_number'])
-            return data
-        else:
-            print("The URL does not match a standard GitHub Pull Request format.")
-            return None
