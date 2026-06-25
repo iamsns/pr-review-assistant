@@ -19,6 +19,7 @@ class GithubService:
             gh_pr_endpoint = f"https://api.github.com/repos/{pr_data["owner"]}/{pr_data["repo"]}/pulls/{pr_data["pr_number"]}/files"
             files_data = self._fetch_pr_files(gh_pr_endpoint)
             print("files_data", files_data)
+            
             files = [
                 FileChange(
                     file_name=file["filename"],
@@ -26,7 +27,7 @@ class GithubService:
                     additions=file["additions"],
                     deletions=file["deletions"],
                     changes=file["changes"],
-                    patch=file["patch"]
+                    patch=file.get("patch", None)
                 )
                 for file in files_data
             ]

@@ -16,5 +16,9 @@ def review_pr(request: PROverviewRequest):
     return overview_service.generate_overview(request)
 
 @overview_router.post('/summary')
-def pr_summary(request: PROverviewData):
+def pr_summary(request: PROverviewRequest):
     return overview_service.get_pr_summary(request)
+
+@overview_router.post('/files_summary')
+def pr_summary(request: PROverviewRequest):
+    return overview_service.generate_file_summaries(request)

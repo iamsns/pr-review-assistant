@@ -35,7 +35,7 @@ class FileChange(BaseModel):
     additions: int
     deletions: int
     changes: int
-    patch: str
+    patch: Optional[str] = None
 
 class PROverviewData(BaseModel):
     files_changed: int
@@ -52,3 +52,12 @@ class PROverview(BaseModel):
 class PRSummary(BaseModel):
     summary: str
     key_changes: List[str]
+    
+class FileSummaryFiles(BaseModel):
+    file: str
+    summary: str
+    change_type: str
+    
+class PRFileSummary(BaseModel):
+    files: List[FileSummaryFiles]
+    

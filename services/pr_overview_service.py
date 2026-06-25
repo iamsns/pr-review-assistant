@@ -3,7 +3,7 @@ from services.github_service import GithubService
 from schemas.overview_schema import PROverviewRequest, PROverviewData
 
 from utils.github_url_parser import get_pr_metadata
-from llm.chains.pr_summary_chain import pr_summary_chain
+from llm.chains.pr_summary_chain import pr_summary_chain, pr_files_summary_chain
 
 class PROverviewService:
     def __init__(self):
@@ -20,6 +20,15 @@ class PROverviewService:
             pr_metadata = pr_data.model_dump()
             return self.github_service.get_pr_files_overview(pr_metadata)
        
-    def get_pr_summary(self, pr_overview: PROverviewData):
-        print(pr_overview)
-        return pr_summary_chain.invoke({"diff":pr_overview})
+    def get_pr_summary(self, body: PROverviewRequest):
+        overview = self.generate_overview(pr_data=body)
+        if overview:
+            return pr_summary_chain.invoke({"diff":overview})
+        return "Invalid Data"
+    
+    def generate_file_summaries(self, body: PROverviewRequest):
+        overview = self.generate_overview(pr_data=body)
+        if overview:
+            return pr_files_summary_chain.invoke({"diff":overview})
+        
+        return "Invalid Data"
