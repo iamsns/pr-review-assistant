@@ -3,7 +3,8 @@ from services.github_service import GithubService
 from schemas.overview_schema import PROverviewRequest, PROverviewData
 
 from utils.github_url_parser import get_pr_metadata
-from llm.chains.pr_summary_chain import pr_summary_chain, pr_files_summary_chain
+from llm.chains.pr_summary_chain import pr_summary_chain
+from llm.chains.pr_file_summary_chain import pr_files_summary_chain
 
 class PROverviewService:
     def __init__(self):
