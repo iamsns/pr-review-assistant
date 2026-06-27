@@ -19,13 +19,15 @@ class GithubService:
             gh_pr_endpoint = f"https://api.github.com/repos/{pr_data["owner"]}/{pr_data["repo"]}/pulls/{pr_data["pr_number"]}/files"
             files_data = self._fetch_pr_files(gh_pr_endpoint)
             print("files_data", files_data)
+            
             files = [
                 FileChange(
                     file_name=file["filename"],
                     change_type=file["status"],
                     additions=file["additions"],
                     deletions=file["deletions"],
-                    changes=file["changes"]
+                    changes=file["changes"],
+                    patch=file.get("patch", None)
                 )
                 for file in files_data
             ]
@@ -39,23 +41,3 @@ class GithubService:
 
         except requests.RequestException as e:
             raise Exception(f"Failed to fetch PR details: {str(e)}")
-        
-    def get_pr_metadata(self, pr: str):         
-        pattern = r"github\.com/(?P<owner>[^/]+)/(?P<repo>[^/]+)/pull/(?P<pr_number>\d+)/?$"
-
-        match = re.search(pattern, pr)
-
-        if match:
-            # Extract data as a clean dictionary
-            data = match.groupdict()
-            print("Extracted Data:", data)
-            
-            # Access individual components directly
-            print(f"Owner:   {data['owner']}")
-            print(f"Repo:    {data['repo']}")
-            print(f"PR Num:  {data['pr_number']}")
-            data['pr_number'] = int(data['pr_number'])
-            return data
-        else:
-            print("The URL does not match a standard GitHub Pull Request format.")
-            return None
