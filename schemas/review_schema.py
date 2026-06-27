@@ -56,3 +56,42 @@ class ReviewCommentsResponse(BaseModel):
         default_factory=list,
         description="List of AI-generated review comments for the pull request. Empty if no review comments are required."
     )
+
+class SecurityIssue(BaseModel):
+    severity: str = Field(
+        description="High, Medium or Low."
+    )
+
+    type: str = Field(
+        description="Category of the security issue."
+    )
+
+    description: str = Field(
+        description="Explanation of the security concern."
+    )
+
+    file_name: str | None = Field(
+        default=None,
+        description="File containing the issue."
+    )
+
+    line_number: int | None = Field(
+        default=None,
+        description="Changed line where the issue occurs."
+    )
+
+    vulnerable_code: str | None = Field(
+        default=None,
+        description="Relevant code snippet."
+    )
+
+    recommendation: str = Field(
+        description="Recommended secure implementation."
+    )
+
+
+class SecurityReviewResponse(BaseModel):
+    security_issues: list[SecurityIssue] = Field(
+        default_factory=list,
+        description="List of security issues."
+    )
