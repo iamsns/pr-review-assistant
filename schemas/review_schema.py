@@ -95,3 +95,35 @@ class SecurityReviewResponse(BaseModel):
         default_factory=list,
         description="List of security issues."
     )
+    
+
+class PerformanceIssue(BaseModel):
+    severity: str = Field(
+        description="Impact level of the performance issue. One of: High, Medium, Low."
+    )
+    type: str = Field(
+        description="Category of the performance issue (e.g. N+1 Query, Inefficient Loop, High Memory Usage, Missing Pagination, Algorithm Inefficiency)."
+    )
+    description: str = Field(
+        description="Clear explanation of the performance issue and why it may degrade application performance."
+    )
+    file_name: str = Field(
+        description="Relative path of the file containing the performance issue."
+    )
+    line_number: int | None = Field(
+        default=None,
+        description="Approximate line number where the issue occurs. Use null if it cannot be determined."
+    )
+    inefficient_code: str | None = Field(
+        default=None,
+        description="Relevant code snippet responsible for the performance issue. Use null if unavailable."
+    )
+    recommendation: str = Field(
+        description="Recommended change to improve performance and eliminate the issue."
+    )
+
+
+class PerformanceReviewResponse(BaseModel):
+    performance_issues: list[PerformanceIssue] = Field(
+        description="List of performance issues found in the pull request. Return an empty list if no issues are detected."
+    )
