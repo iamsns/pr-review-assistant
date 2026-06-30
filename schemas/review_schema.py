@@ -95,3 +95,64 @@ class SecurityReviewResponse(BaseModel):
         default_factory=list,
         description="List of security issues."
     )
+    
+
+class PerformanceIssue(BaseModel):
+    severity: str = Field(
+        description="Impact level of the performance issue. One of: High, Medium, Low."
+    )
+    type: str = Field(
+        description="Category of the performance issue (e.g. N+1 Query, Inefficient Loop, High Memory Usage, Missing Pagination, Algorithm Inefficiency)."
+    )
+    description: str = Field(
+        description="Clear explanation of the performance issue and why it may degrade application performance."
+    )
+    file_name: str = Field(
+        description="Relative path of the file containing the performance issue."
+    )
+    line_number: int | None = Field(
+        default=None,
+        description="Approximate line number where the issue occurs. Use null if it cannot be determined."
+    )
+    inefficient_code: str | None = Field(
+        default=None,
+        description="Relevant code snippet responsible for the performance issue. Use null if unavailable."
+    )
+    recommendation: str = Field(
+        description="Recommended change to improve performance and eliminate the issue."
+    )
+
+
+class PerformanceReviewResponse(BaseModel):
+    performance_issues: list[PerformanceIssue] = Field(
+        description="List of performance issues found in the pull request. Return an empty list if no issues are detected."
+    )
+
+class TestCase(BaseModel):
+    title: str = Field(
+        description="Short and descriptive name of the test scenario."
+    )
+
+    description: str = Field(
+        description="Detailed explanation of what the test validates, including the input or action being performed."
+    )
+
+    expected_result: str = Field(
+        description="Expected system behavior or output if the test passes."
+    )
+
+class TestCaseResponse(BaseModel):
+    positive_tests: list[TestCase] = Field(
+        default_factory=list,
+        description="Test scenarios that verify the expected behavior of the new or modified functionality using valid inputs."
+    )
+
+    negative_tests: list[TestCase] = Field(
+        default_factory=list,
+        description="Test scenarios that verify validation, error handling, and application behavior when invalid or unexpected inputs are provided."
+    )
+
+    edge_cases: list[TestCase] = Field(
+        default_factory=list,
+        description="Boundary and corner-case scenarios that validate application stability under unusual or extreme conditions."
+    )
