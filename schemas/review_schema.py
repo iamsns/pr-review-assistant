@@ -127,3 +127,32 @@ class PerformanceReviewResponse(BaseModel):
     performance_issues: list[PerformanceIssue] = Field(
         description="List of performance issues found in the pull request. Return an empty list if no issues are detected."
     )
+
+class TestCase(BaseModel):
+    title: str = Field(
+        description="Short and descriptive name of the test scenario."
+    )
+
+    description: str = Field(
+        description="Detailed explanation of what the test validates, including the input or action being performed."
+    )
+
+    expected_result: str = Field(
+        description="Expected system behavior or output if the test passes."
+    )
+
+class TestCaseResponse(BaseModel):
+    positive_tests: list[TestCase] = Field(
+        default_factory=list,
+        description="Test scenarios that verify the expected behavior of the new or modified functionality using valid inputs."
+    )
+
+    negative_tests: list[TestCase] = Field(
+        default_factory=list,
+        description="Test scenarios that verify validation, error handling, and application behavior when invalid or unexpected inputs are provided."
+    )
+
+    edge_cases: list[TestCase] = Field(
+        default_factory=list,
+        description="Boundary and corner-case scenarios that validate application stability under unusual or extreme conditions."
+    )
