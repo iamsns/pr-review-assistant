@@ -2,6 +2,7 @@ from fastapi import APIRouter, Request
 
 from schemas.review_schema import BugReviewResponse, ReviewCommentsResponse, SecurityReviewResponse, PerformanceReviewResponse, TestCaseResponse
 from schemas.overview_schema import PROverviewRequest
+from schemas.risk_schema import RiskScoreResponse
 from services.review_service import ReviewService
 
 router = APIRouter()
@@ -27,3 +28,7 @@ def performance_review(request: PROverviewRequest):
 @router.post("/test-case", response_model=TestCaseResponse)
 def generate_test_case(request: PROverviewRequest):
     return review_service.generate_test_case(request)
+
+@router.post('/risk-score', response_model=RiskScoreResponse)
+def risk_score(request: PROverviewRequest):
+    return review_service.get_risk_score(request)
